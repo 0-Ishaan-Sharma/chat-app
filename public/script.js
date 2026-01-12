@@ -1,4 +1,4 @@
-const socket = io("https://YOUR-RAILWAY-URL.up.railway.app", {
+const socket = io("chat-app-production-0c3a.up.railway.app", {
   transports: ["websocket"]
 });
 
