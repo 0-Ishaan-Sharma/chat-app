@@ -1,6 +1,7 @@
-const socket = io("chat-app-production-0c3a.up.railway.app", {
+const socket = io({
   transports: ["websocket"]
 });
+
 
 const joinContainer = document.getElementById("join-container");
 const chatContainer = document.getElementById("chat-container");
