@@ -1,7 +1,4 @@
-const socket = io({
-  transports: ["websocket", "polling"]
-});
-
+const socket = io(); 
 
 const joinContainer = document.getElementById("join-container");
 const chatContainer = document.getElementById("chat-container");
