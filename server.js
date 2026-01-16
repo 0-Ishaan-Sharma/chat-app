@@ -8,13 +8,14 @@ mongoose.connect(process.env.MONGO_URL)
 //Server initialization
 const express = require("express");
 const http = require("http");
+const path = require("path");
 const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  transports: ["websocket"],
+  transports: ["websocket", "polling"]
   cors: {
     origin: "*"
   }
@@ -29,11 +30,6 @@ app.get("/", (req, res) => {
 // Store connected users
 const users = new Map();
 const MAX_USERS = 6;
-
-// Basic route (optional)
-app.get("/", (req, res) => {
-  res.send("Chat server is running");
-});
 
 // Socket.IO connection
 io.on("connection", (socket) => {
