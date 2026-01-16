@@ -1,3 +1,10 @@
+const mongoose = require("mongoose");
+const Message = require("./models/Message");
+mongoose.connect(process.env.MONGO_URL)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error("MongoDB error:", err));
+
+
 const express = require("express");
 const http = require("http");
 const path = require("path");
@@ -35,27 +42,41 @@ io.on("connection", (socket) => {
   }
 
   // When user joins with a name
-  socket.on("join", (username) => {
-    users.set(socket.id, username);
+  socket.on("join", async (username) => {
+  users.set(socket.id, username);
 
-    // Notify others
-    socket.broadcast.emit("user_joined", username);
+  socket.broadcast.emit("user_joined", username);
 
-    // Send current users list
-    io.emit("users_list", Array.from(users.values()));
-  });
+  io.emit("users_list", Array.from(users.values()));
+
+  // 🔥 Load last 50 messages for new user
+  const history = await Message
+    .find()
+    .sort({ time: 1 })
+    .limit(50);
+
+  socket.emit("message_history", history);
+});
 
   // Handle incoming messages
-  socket.on("message", (msg) => {
-    const username = users.get(socket.id);
-    if (!username) return;
+  socket.on("message", async (msg) => {
+  const username = users.get(socket.id);
+  if (!username) return;
 
-    io.emit("message", {
-      user: username,
-      text: msg,
-      time: new Date().toISOString()
-    });
+  const message = new Message({
+    user: username,
+    text: msg
   });
+
+  await message.save();
+
+  io.emit("message", {
+    user: username,
+    text: msg,
+    time: message.time
+  });
+});
+
 
   // Handle disconnect
   socket.on("disconnect", () => {
