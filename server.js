@@ -1,19 +1,24 @@
+//Database initialization
 const mongoose = require("mongoose");
 const Message = require("./models/Message");
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB error:", err));
 
-
+//Server initialization
 const express = require("express");
 const http = require("http");
-const path = require("path");
 const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
 
-const io = new Server(server);
+const io = new Server(server, {
+  transports: ["websocket"],
+  cors: {
+    origin: "*"
+  }
+});
 
 app.use(express.static(path.join(__dirname, "public")));
 
