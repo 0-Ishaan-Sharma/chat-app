@@ -1,9 +1,13 @@
 //Database initialization
-const mongoose = require("mongoose");
-const Message = require("./models/Message");
+console.log("MONGO_URL =", process.env.MONGO_URL);
+
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("Connected to MongoDB"))
-  .catch(err => console.error("MongoDB error:", err));
+  .catch(err => {
+    console.error("MongoDB error:", err);
+    process.exit(1);
+  });
+
 
 //Server initialization
 const express = require("express");
