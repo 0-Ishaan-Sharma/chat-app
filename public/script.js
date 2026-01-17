@@ -15,7 +15,7 @@ const joinError = document.getElementById("join-error");
 socket.on("message_history", messages => {
   messagesDiv.innerHTML = "";
   messages.forEach(msg => {
-    addMessage(`${msg.user}: ${msg.text}`);
+    addMessage(`${msg.username}: ${msg.text}`);
   });
 });
 
